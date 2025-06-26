@@ -1,34 +1,32 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Decolight Barcode Scanner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/@zxing/browser@latest"></script>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-    video { width: 100%; max-width: 480px; border: 2px solid #333; border-radius: 10px; }
-    h2 { margin-bottom: 20px; color: #1976d2; }
-    #status { margin-top: 20px; font-weight: bold; color: green; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Decolight Scanner</title>
 </head>
-<body>
+<body style="font-family:sans-serif; text-align:center; padding:20px;">
   <h2>Scan Barcode</h2>
-  <video id="video" autoplay></video>
-  <p id="status">Waiting for scan...</p>
+  <video id="video" width="100%" height="auto" style="border:1px solid #ccc; border-radius:10px;"></video>
+  <br><br>
+  <button onclick="startScan()" style="padding:10px 20px; font-size:16px; border:none; border-radius:6px; background-color:#007BFF; color:white;">Start Scanner</button>
+  <script type="module">
+    import { BrowserMultiFormatReader } from 'https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/esm/index.min.js';
 
-  <script>
-    const codeReader = new ZXing.BrowserBarcodeReader();
-    const videoElement = document.getElementById('video');
-    const statusElement = document.getElementById('status');
+    const codeReader = new BrowserMultiFormatReader();
 
-    codeReader.decodeFromVideoDevice(null, 'video', (result, err) => {
-      if (result) {
-        statusElement.textContent = 'Scanned: ' + result.text;
-        window.location.href = 'http://decolite1.dyndns.org:8000/store/index.asp?Code=' + encodeURIComponent(result.text);
+    window.startScan = async function () {
+      try {
+        const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video');
+        if (result) {
+          const code = result.getText();
+          window.location.href = 'http://decolite1.dyndns.org:8000/store/index.asp?Code=' + encodeURIComponent(code);
+        }
+      } catch (err) {
+        alert("Camera error: " + err.message);
       }
-    });
+    };
   </script>
 </body>
 </html>

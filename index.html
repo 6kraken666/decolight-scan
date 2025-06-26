@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Decolight Scanner</title>
 </head>
 <body style="font-family:sans-serif; text-align:center; padding:20px;">
   <h2>Scan Barcode</h2>
-  <video id="video" width="100%" height="auto" style="border:1px solid #ccc; border-radius:10px;"></video>
-  <br><br>
-  <button id="scanButton" style="padding:10px 20px; font-size:16px; border:none; border-radius:6px; background-color:#007BFF; color:white;">Start Scanner</button>
+  <div id="reader" style="width:100%;max-width:480px;margin:auto;"></div>
+  <br/>
+  <button id="startBtn" style="padding:10px 20px; font-size:16px; background:#007BFF;color:white;border:none;border-radius:6px;">
+    Start Scanner
+  </button>
 
-  <script type="module">
-    import { BrowserMultiFormatReader } from 'https://unpkg.com/@zxing/browser@0.0.10/esm/index.js';
-
-    const codeReader = new BrowserMultiFormatReader();
-    const scanButton = document.getElementById('scanButton');
-
-    scanButton.addEventListener('click', async () => {
-      try {
-        const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video');
-        if (result) {
-          const code = result.getText();
-          window.location.href = 'http://decolite1.dyndns.org:8000/store/index.asp?Code=' + encodeURIComponent(code);
-        }
-      } catch (err) {
-        alert("Camera error: " + err.message);
-      }
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script>
+    const reader = new Html5Qrcode("reader");
+    document.getElementById("startBtn").addEventListener("click", () => {
+      reader.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        qrCodeMessage => {
+          reader.stop().then(() => {
+            window.location.href = 'http://decolite1.dyndns.org:8000/store/index.asp?Code=' + encodeURIComponent(qrCodeMessage);
+          });
+        },
+        errorMessage => { /* ignore non-critical errors */ }
+      ).catch(err => alert("Camera error: " + err));
     });
   </script>
 </body>

@@ -9,14 +9,15 @@
   <h2>Scan Barcode</h2>
   <video id="video" width="100%" height="auto" style="border:1px solid #ccc; border-radius:10px;"></video>
   <br><br>
-  <button onclick="startScan()" style="padding:10px 20px; font-size:16px; border:none; border-radius:6px; background-color:#007BFF; color:white;">Start Scanner</button>
+  <button id="scanButton" style="padding:10px 20px; font-size:16px; border:none; border-radius:6px; background-color:#007BFF; color:white;">Start Scanner</button>
 
   <script type="module">
     import { BrowserMultiFormatReader } from 'https://unpkg.com/@zxing/browser@0.0.10/esm/index.js';
 
     const codeReader = new BrowserMultiFormatReader();
+    const scanButton = document.getElementById('scanButton');
 
-    window.startScan = async function () {
+    scanButton.addEventListener('click', async () => {
       try {
         const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video');
         if (result) {
@@ -26,7 +27,7 @@
       } catch (err) {
         alert("Camera error: " + err.message);
       }
-    };
+    });
   </script>
 </body>
 </html>
